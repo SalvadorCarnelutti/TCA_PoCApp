@@ -10,6 +10,7 @@ import SwiftUI
 struct ContentView: View {
     @State private var dogBuckets = [[Dog]]()
     @State var isRequestInProgress: Bool = true
+    @State var isAlertPresented: Bool = false
     
     var body: some View {
         NavigationStack {
@@ -31,7 +32,7 @@ struct ContentView: View {
                 
                 if isRequestInProgress {
                     ProgressView()
-                        .controlSize(.large)
+                        .controlSize(.extraLarge)
                 }
             }
             .navigationTitle("All dogs")
@@ -39,8 +40,12 @@ struct ContentView: View {
                 do {
                     try await fetchDogs()
                 } catch {
-                    
+                    isAlertPresented = true
                 }
+            }
+            .alert(isPresented: $isAlertPresented) {
+                Alert(title: Text("Network error"),
+                      message: Text("An unexpected error occurred, please try again later"))
             }
         }
     }

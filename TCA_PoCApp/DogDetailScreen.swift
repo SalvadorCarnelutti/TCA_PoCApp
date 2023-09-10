@@ -8,19 +8,25 @@
 import SwiftUI
 
 struct DogDetailScreen: View {
+    @Environment(\.dismiss) var dismiss
     @State private var dogImageURLs = [String]()
+    @State var isAlertPresented: Bool = false
     
     let breed: String
     
     var body: some View {
         VStack {
-            ForEach(dogImageURLs, id: \.self) { dogImageURL in
-                AsyncImage(url: URL(string: dogImageURL)) { image in
-                    image
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                } placeholder: {
-                    ProgressView()
+            Spacer()
+            VStack(alignment: .center) {
+                ForEach(dogImageURLs, id: \.self) { dogImageURL in
+                    AsyncImage(url: URL(string: dogImageURL)) { image in
+                        image
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                    } placeholder: {
+                        ProgressView()
+                            .controlSize(.large)
+                    }
                 }
             }
             
@@ -37,14 +43,18 @@ struct DogDetailScreen: View {
             }
             .buttonStyle(.borderedProminent)
             .navigationTitle(breed.capitalized)
-
         }
         .task {
             do {
                 try await fetchImageURLs()
             } catch {
-                
+                isAlertPresented = true
             }
+        }
+        .alert(isPresented: $isAlertPresented) {
+            Alert(title: Text("Network error"),
+                  message: Text("An unexpected error occurred, please try again later"),
+                  dismissButton: .cancel(Text("Ok"), action: { dismiss() }))
         }
     }
     
@@ -57,11 +67,11 @@ struct DogDetailScreen: View {
     }
 }
 
+#Preview {
+    DogDetailScreen(breed: "Akita")
+}
+
 struct RandomImagesResponse: Codable {
     let message: [String]
     let status: String
-}
-
-#Preview {
-    DogDetailScreen(breed: "Akita")
 }
