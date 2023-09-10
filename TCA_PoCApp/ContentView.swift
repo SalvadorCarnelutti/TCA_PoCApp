@@ -12,34 +12,48 @@ struct ContentView: View {
     @State var isRequestInProgress: Bool = true
     
     var body: some View {
-        ZStack {
-            List {
-                ForEach(dogBuckets, id: \.self) { dogBucket in
-                    Section(dogBucket.first!.breed.first!.uppercased()) {
-                        ForEach(dogBucket) { dog in
-                            VStack(alignment: .leading) {
-                                Text(dog.breed.capitalized).font(.title)
-                                Text(dog.types.map { $0.capitalized }.joined(separator: ", "))
+        NavigationStack {
+            ZStack {
+                List {
+                    ForEach(dogBuckets, id: \.self) { dogBucket in
+                        Section(dogBucket.first!.breed.first!.uppercased()) {
+                            ForEach(dogBucket) { dog in
+                                NavigationLink(destination: DogDetailScreen(breed: dog.breed)) {
+                                    VStack(alignment: .leading) {
+                                        Text(dog.breed.capitalized).font(.title)
+                                        Text(dog.types.map { $0.capitalized }.joined(separator: ", "))
+                                    }
+                                }
                             }
                         }
                     }
                 }
-            }
-            if isRequestInProgress {
-                ProgressView()
-                    .controlSize(.large)
-            }
-        }
-        .onAppear {
-            Task {
-                let (data, _) = try await URLSession.shared
-                    .data(from: URL(string: "https://dog.ceo/api/breeds/list/all")!)
-                let dogs = try JSONDecoder().decode(AllBreedsResponse.self, from: data).message.map { key, value in Dog(breed: key, types: value) }
                 
-                isRequestInProgress = false
-                dogBuckets = bucketSortDogs(dogs)
+                if isRequestInProgress {
+                    ProgressView()
+                        .controlSize(.large)
+                }
+            }
+            .navigationTitle("All dogs")
+            .task {
+                do {
+                    try await fetchDogs()
+                } catch {
+                    
+                }
             }
         }
+    }
+    
+    private func fetchDogs() async throws {
+        guard dogBuckets.isEmpty else { return }
+        
+        let (data, _) = try await URLSession.shared
+            .data(from: URL(string: "https://dog.ceo/api/breeds/list/all")!)
+        let dogs = try JSONDecoder().decode(AllBreedsResponse.self, from: data).message.map { key, value in Dog(breed: key, types: value) }
+        
+        isRequestInProgress = false
+        dogBuckets = bucketSortDogs(dogs)
     }
     
     private func bucketSortDogs(_ dogs: [Dog]) -> [[Dog]] {
@@ -49,7 +63,7 @@ struct ContentView: View {
         var sorted = [[Dog]]()
         
         for (_, value) in dogsdDict.sorted(by: {$0.key < $1.key}) {
-            sorted.append(value)
+            sorted.append(value.sorted(by: { $0.breed < $1.breed }))
         }
         
         return sorted
