@@ -6,12 +6,19 @@
 //
 
 import SwiftUI
+import ComposableArchitecture
 
 @main
 struct TCA_PoCAppApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            if !_XCTIsTesting {
+                AllDogsScreen(
+                    store: Store(initialState: AllDogsFeature.State()) {
+                        AllDogsFeature()
+                    }
+                )
+            }       
         }
     }
 }
