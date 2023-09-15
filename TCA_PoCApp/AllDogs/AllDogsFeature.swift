@@ -10,6 +10,7 @@ import ComposableArchitecture
 
 struct AllDogsFeature: Reducer {
     struct State: Equatable {
+        @PresentationState var dogDetail: DogDetailFeature.State?
         @PresentationState var alert: AlertState<Action.Alert>?
         var isLoading = false
         var dogBuckets = [DogBucket]()
@@ -20,6 +21,8 @@ struct AllDogsFeature: Reducer {
         case retryButtonTapped
         case dogsResponse([Dog])
         case alert(PresentationAction<Alert>)
+        case dogCellTapped(Dog)
+        case dogDetail(PresentationAction<DogDetailFeature.Action>)
         enum Alert: Equatable {
             case networkError
         }
@@ -34,7 +37,7 @@ struct AllDogsFeature: Reducer {
                 state.isLoading = true
                 return .run { send in
                     do {
-                        try await send(.dogsResponse(self.dogAPIClient.fetchAllDogs()))
+                        try await send(.dogsResponse(dogAPIClient.fetchAllDogs()))
                     } catch {
                         await send(.alert(.presented(.networkError)))
                     }
@@ -42,6 +45,11 @@ struct AllDogsFeature: Reducer {
             case let .dogsResponse(dogs):
                 state.isLoading = false
                 state.dogBuckets = bucketSortDogs(dogs)
+                return .none
+            case let .dogCellTapped(dog):
+                state.dogDetail = DogDetailFeature.State(breed: dog.breed)
+                return .none
+            case .dogDetail:
                 return .none
             case .alert(.presented(.networkError)):
                 state.isLoading = false
@@ -54,6 +62,9 @@ struct AllDogsFeature: Reducer {
             case .alert:
                 return .none
             }
+        }
+        .ifLet(\.$dogDetail, action: /Action.dogDetail) {
+            DogDetailFeature()
         }
         .ifLet(\.$alert, action: /Action.alert)
     }

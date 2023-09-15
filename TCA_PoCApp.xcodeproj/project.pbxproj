@@ -10,6 +10,7 @@
 		B459B2612AAD57C40086D0EA /* DogDetailScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = B459B2602AAD57C40086D0EA /* DogDetailScreen.swift */; };
 		B459B2642AAE12120086D0EA /* ComposableArchitecture in Frameworks */ = {isa = PBXBuildFile; productRef = B459B2632AAE12120086D0EA /* ComposableArchitecture */; };
 		B459B2672AAE167F0086D0EA /* AllDogsFeature.swift in Sources */ = {isa = PBXBuildFile; fileRef = B459B2662AAE167F0086D0EA /* AllDogsFeature.swift */; };
+		B460713A2AB4BC1F007C459E /* DogDetailFeature.swift in Sources */ = {isa = PBXBuildFile; fileRef = B46071392AB4BC1F007C459E /* DogDetailFeature.swift */; };
 		B4B2C7832AAD3133006A42AA /* TCA_PoCAppApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B2C7822AAD3133006A42AA /* TCA_PoCAppApp.swift */; };
 		B4B2C7852AAD3133006A42AA /* AllDogsScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B2C7842AAD3133006A42AA /* AllDogsScreen.swift */; };
 		B4B2C7872AAD3135006A42AA /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B4B2C7862AAD3135006A42AA /* Assets.xcassets */; };
@@ -31,6 +32,7 @@
 /* Begin PBXFileReference section */
 		B459B2602AAD57C40086D0EA /* DogDetailScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DogDetailScreen.swift; sourceTree = "<group>"; };
 		B459B2662AAE167F0086D0EA /* AllDogsFeature.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AllDogsFeature.swift; sourceTree = "<group>"; };
+		B46071392AB4BC1F007C459E /* DogDetailFeature.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DogDetailFeature.swift; sourceTree = "<group>"; };
 		B4B2C77F2AAD3133006A42AA /* TCA_PoCApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TCA_PoCApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B4B2C7822AAD3133006A42AA /* TCA_PoCAppApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TCA_PoCAppApp.swift; sourceTree = "<group>"; };
 		B4B2C7842AAD3133006A42AA /* AllDogsScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AllDogsScreen.swift; sourceTree = "<group>"; };
@@ -69,6 +71,15 @@
 			path = AllDogs;
 			sourceTree = "<group>";
 		};
+		B46071382AB4BC05007C459E /* DogDetail */ = {
+			isa = PBXGroup;
+			children = (
+				B459B2602AAD57C40086D0EA /* DogDetailScreen.swift */,
+				B46071392AB4BC1F007C459E /* DogDetailFeature.swift */,
+			);
+			path = DogDetail;
+			sourceTree = "<group>";
+		};
 		B4B2C7762AAD3133006A42AA = {
 			isa = PBXGroup;
 			children = (
@@ -92,7 +103,7 @@
 			children = (
 				B4B2C7822AAD3133006A42AA /* TCA_PoCAppApp.swift */,
 				B459B2652AAE16630086D0EA /* AllDogs */,
-				B459B2602AAD57C40086D0EA /* DogDetailScreen.swift */,
+				B46071382AB4BC05007C459E /* DogDetail */,
 				B4E0FFB62AB2A02E000010EF /* DogAPIClient.swift */,
 				B4B2C7862AAD3135006A42AA /* Assets.xcassets */,
 				B4B2C7882AAD3135006A42AA /* Preview Content */,
@@ -222,6 +233,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B460713A2AB4BC1F007C459E /* DogDetailFeature.swift in Sources */,
 				B4E0FFB72AB2A02E000010EF /* DogAPIClient.swift in Sources */,
 				B459B2612AAD57C40086D0EA /* DogDetailScreen.swift in Sources */,
 				B4B2C7852AAD3133006A42AA /* AllDogsScreen.swift in Sources */,

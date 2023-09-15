@@ -19,11 +19,16 @@ struct AllDogsScreen: View {
                         ForEach(viewStore.dogBuckets) { dogBucket in
                             Section(dogBucket.firstCharacter) {
                                 ForEach(dogBucket.dogs) { dog in
-                                    NavigationLink(destination: DogDetailScreen(breed: dog.breed)) {
+                                    HStack {
                                         VStack(alignment: .leading) {
                                             Text(dog.breed.capitalized).font(.title)
                                             Text(dog.types.map { $0.capitalized }.joined(separator: ", "))
                                         }
+                                        Spacer()
+                                    }
+                                    .contentShape(Rectangle())
+                                    .onTapGesture {
+                                        viewStore.send(.dogCellTapped(dog))
                                     }
                                 }
                             }
@@ -51,6 +56,16 @@ struct AllDogsScreen: View {
                 .task {
                     viewStore.send(.screenAppeared)
                 }
+                .sheet(
+                    store: self.store.scope(
+                        state: \.$dogDetail,
+                        action: { .dogDetail($0) }
+                    )
+                ) { dogDetailStore in
+                    NavigationStack {
+                        DogDetailScreen(store: dogDetailStore)
+                    }
+                }
                 .alert(
                     store: self.store.scope(
                         state: \.$alert,
@@ -59,7 +74,6 @@ struct AllDogsScreen: View {
                 )
             }
         }
-
     }
 }
 
