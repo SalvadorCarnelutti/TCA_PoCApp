@@ -10,7 +10,7 @@ import Foundation
 
 struct DogAPIClient {
     var fetchAllDogs: () async throws -> [Dog]
-    var fetchDogImageURLs: (String) async throws -> [URL]
+    var fetchDogImageURLs: (String) async throws -> [String]
     
     private static func fetchDogs() async throws -> [Dog] {
         let (data, _) = try await URLSession.shared
@@ -20,12 +20,12 @@ struct DogAPIClient {
         return dogs
     }
     
-    private static func fetchImageURLs(for breed: String) async throws -> [URL] {
+    private static func fetchImageURLs(for breed: String) async throws -> [String] {
         let (data, _) = try await URLSession.shared
             .data(from: URL(string: "https://dog.ceo/api/breed/\(breed)/images/random/3")!)
         
         let urls = try JSONDecoder().decode(RandomImagesResponse.self, from: data).message
-        return urls.compactMap { URL(string: $0) }
+        return urls
     }
 }
 

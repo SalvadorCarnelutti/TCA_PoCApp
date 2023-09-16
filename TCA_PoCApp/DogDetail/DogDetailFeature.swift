@@ -18,7 +18,7 @@ struct DogDetailFeature: Reducer {
 
     enum Action: Equatable {
         case screenAppeared
-        case imageURLsResponse([URL])
+        case imageURLsResponse([String])
         case refreshButtonTapped
         case alert(PresentationAction<Alert>)
         enum Alert: Equatable {
@@ -29,7 +29,6 @@ struct DogDetailFeature: Reducer {
     
     @Dependency(\.dogAPIClient) var dogAPIClient
     @Dependency(\.dismiss) var dismiss
-
 
     var body: some ReducerOf<Self> {
         Reduce { state, action in
@@ -44,7 +43,8 @@ struct DogDetailFeature: Reducer {
                     }
                 }
             case let .imageURLsResponse(imageURLs):
-                state.dogImageURLs = imageURLs
+                state.isLoading = false
+                state.dogImageURLs = imageURLs.compactMap { URL(string: $0) }
                 return .none
             case .alert(.presented(.networkError)):
                 state.isLoading = false
