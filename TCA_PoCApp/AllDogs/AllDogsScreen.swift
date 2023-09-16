@@ -56,21 +56,18 @@ struct AllDogsScreen: View {
                 .task {
                     viewStore.send(.screenAppeared)
                 }
-                .sheet(
-                    store: self.store.scope(
-                        state: \.$dogDetail,
-                        action: { .dogDetail($0) }
-                    )
+                .sheet(store: self.store.scope(state: \.$destination, action: { .destination($0) }),
+                       state: /AllDogsFeature.Destination.State.dogDetail,
+                       action: AllDogsFeature.Destination.Action.dogDetail
                 ) { dogDetailStore in
                     NavigationStack {
                         DogDetailScreen(store: dogDetailStore)
                     }
                 }
                 .alert(
-                    store: self.store.scope(
-                        state: \.$alert,
-                        action: { .alert($0) }
-                    )
+                    store: self.store.scope(state: \.$destination, action: { .destination($0) }),
+                    state: /AllDogsFeature.Destination.State.alert,
+                    action: AllDogsFeature.Destination.Action.alert
                 )
             }
         }

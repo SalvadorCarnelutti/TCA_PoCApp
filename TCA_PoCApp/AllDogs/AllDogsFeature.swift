@@ -10,8 +10,7 @@ import ComposableArchitecture
 
 struct AllDogsFeature: Reducer {
     struct State: Equatable {
-        @PresentationState var dogDetail: DogDetailFeature.State?
-        @PresentationState var alert: AlertState<Action.Alert>?
+        @PresentationState var destination: Destination.State?
         var isLoading = false
         var dogBuckets = [DogBucket]()
     }
@@ -20,9 +19,8 @@ struct AllDogsFeature: Reducer {
         case screenAppeared
         case retryButtonTapped
         case dogsResponse([Dog])
-        case alert(PresentationAction<Alert>)
+        case destination(PresentationAction<Destination.Action>)
         case dogCellTapped(Dog)
-        case dogDetail(PresentationAction<DogDetailFeature.Action>)
         enum Alert: Equatable {
             case networkError
         }
@@ -39,7 +37,7 @@ struct AllDogsFeature: Reducer {
                     do {
                         try await send(.dogsResponse(dogAPIClient.fetchAllDogs()))
                     } catch {
-                        await send(.alert(.presented(.networkError)))
+                        await send(.destination(.presented(.alert(.networkError))))
                     }
                 }
             case let .dogsResponse(dogs):
@@ -47,26 +45,27 @@ struct AllDogsFeature: Reducer {
                 state.dogBuckets = bucketSortDogs(dogs)
                 return .none
             case let .dogCellTapped(dog):
-                state.dogDetail = DogDetailFeature.State(breed: dog.breed)
+                state.destination = .dogDetail(
+                    DogDetailFeature.State(breed: dog.breed)
+                )
                 return .none
-            case .dogDetail:
-                return .none
-            case .alert(.presented(.networkError)):
+            case .destination(.presented(.alert(.networkError))):
                 state.isLoading = false
-                state.alert = AlertState {
-                    TextState("Network error")
-                } message: {
-                    TextState("An unexpected error occurred, please try again later")
-                }
+                state.destination = .alert(
+                    AlertState {
+                        TextState("Network error")
+                    } message: {
+                        TextState("An unexpected error occurred, please try again later")
+                    }
+                )
                 return .none
-            case .alert:
+            case .destination:
                 return .none
             }
         }
-        .ifLet(\.$dogDetail, action: /Action.dogDetail) {
-            DogDetailFeature()
+        .ifLet(\.$destination, action: /Action.destination) {
+            Destination()
         }
-        .ifLet(\.$alert, action: /Action.alert)
     }
     
     private func bucketSortDogs(_ dogs: [Dog]) -> [DogBucket] {
@@ -80,6 +79,26 @@ struct AllDogsFeature: Reducer {
         }
         
         return sorted
+    }
+}
+
+extension AllDogsFeature {
+    struct Destination: Reducer {
+        enum State: Equatable {
+            case dogDetail(DogDetailFeature.State)
+            case alert(AlertState<AllDogsFeature.Action.Alert>)
+        }
+        
+        enum Action: Equatable {
+            case dogDetail(DogDetailFeature.Action)
+            case alert(AllDogsFeature.Action.Alert)
+        }
+        
+        var body: some ReducerOf<Self> {
+            Scope(state: /State.dogDetail, action: /Action.dogDetail) {
+                DogDetailFeature()
+            }
+        }
     }
 }
 
