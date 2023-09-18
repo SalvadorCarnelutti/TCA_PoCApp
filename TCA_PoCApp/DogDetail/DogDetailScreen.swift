@@ -11,8 +11,6 @@ import ComposableArchitecture
 struct DogDetailScreen: View {
     let store: StoreOf<DogDetailFeature>
     
-    @Environment(\.dismiss) var dismiss
-    
     var body: some View {
         WithViewStore(self.store, observe: { $0 }) { viewStore in
             VStack {
@@ -52,6 +50,12 @@ struct DogDetailScreen: View {
     }
 }
 
-//#Preview {
-//    DogDetailScreen(breed: "Akita")
-//}
+#Preview {
+    NavigationStack {
+        DogDetailScreen(
+            store: Store(initialState: DogDetailFeature.State(breed: "australian")) {
+                DogDetailFeature()
+            }
+        )
+    }
+}

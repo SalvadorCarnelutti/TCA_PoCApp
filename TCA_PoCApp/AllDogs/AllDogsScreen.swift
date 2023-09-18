@@ -74,8 +74,11 @@ struct AllDogsScreen: View {
     }
 }
 
-//struct ContentView_Previews: PreviewProvider {
-//    static var previews: some View {
-//        AllDogsScreen(, store: <#StoreOf<AllDogsFeature>#>)
-//    }
-//}
+#Preview {
+    AllDogsScreen(
+        store: Store(initialState: AllDogsFeature.State()) {
+            AllDogsFeature()
+        }
+    )
+}
+
